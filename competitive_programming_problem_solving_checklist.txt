@@ -1,0 +1,933 @@
+COMPETITIVE PROGRAMMING — COMPLETE PROBLEM-SOLVING CHECKLIST
+
+============================================================
+0. READ THE PROBLEM PROPERLY
+============================================================
+
+[ ] What exactly is given?
+[ ] What exactly must I output?
+[ ] Is it one answer, count, minimum, maximum, construction, or existence?
+[ ] What operations are allowed?
+[ ] Are operations reversible?
+[ ] Is the order of operations important?
+[ ] Can I reorder the input?
+[ ] Are there multiple test cases?
+[ ] What are n, values, k, etc.?
+[ ] What are the minimum and maximum constraints?
+[ ] What does the modulo mean?
+[ ] Are there hidden edge cases?
+
+IMPORTANT:
+[ ] Don't solve the story. Solve the mathematical operation.
+
+
+============================================================
+1. CONSTRAINT CHECK
+============================================================
+
+Immediately write down:
+
+n <= ?
+a[i] <= ?
+sum(n) <= ?
+number of test cases <= ?
+
+Then estimate what complexity is possible.
+
+Typical guide:
+
+n <= 10       -> brute force / permutations
+n <= 20       -> bitmask / 2^n
+n <= 40       -> meet-in-the-middle
+n <= 100      -> O(n^3) sometimes
+n <= 500      -> O(n^2)
+n <= 2000     -> O(n^2)
+n <= 1e5      -> O(n log n)
+n <= 1e6      -> O(n) / O(n log n) carefully
+values <= 1e9 -> binary search / math / bits
+values <= 1e18 -> number theory / 64-bit / bits
+
+[ ] What is the maximum number of operations my solution performs?
+
+
+============================================================
+2. IDENTIFY THE PROBLEM TYPE
+============================================================
+
+ARRAY
+[ ] Prefix sum
+[ ] Difference array
+[ ] Two pointers
+[ ] Sliding window
+[ ] Sorting
+[ ] Binary search
+[ ] Monotonic stack
+[ ] Monotonic queue
+[ ] Frequency map
+[ ] Coordinate compression
+
+RANGE QUERIES
+[ ] Prefix sums
+[ ] Difference array
+[ ] Fenwick tree
+[ ] Segment tree
+[ ] Lazy segment tree
+[ ] Sparse table
+[ ] Merge sort tree
+[ ] Wavelet tree
+
+GRAPH
+[ ] DFS
+[ ] BFS
+[ ] Connected components
+[ ] DSU
+[ ] Shortest path
+[ ] Dijkstra
+[ ] 0-1 BFS
+[ ] Bellman-Ford
+[ ] Topological sort
+[ ] MST
+[ ] Bridges
+[ ] Articulation points
+[ ] SCC
+[ ] Bipartite graph
+[ ] Tree DP
+[ ] LCA
+[ ] Binary lifting
+
+DP
+[ ] 1D DP
+[ ] 2D DP
+[ ] Knapsack
+[ ] Subsequence DP
+[ ] Interval DP
+[ ] Tree DP
+[ ] DAG DP
+[ ] Bitmask DP
+[ ] Digit DP
+[ ] DP + monotonic optimization
+
+MATHEMATICS
+[ ] GCD
+[ ] LCM
+[ ] Prime factorization
+[ ] Sieve
+[ ] Modular arithmetic
+[ ] Combinatorics
+[ ] Modular inverse
+[ ] Binary exponentiation
+[ ] Matrix exponentiation
+[ ] Number theory
+[ ] Bit manipulation
+[ ] Pigeonhole principle
+[ ] Invariants
+
+
+============================================================
+3. BRUTE FORCE FIRST
+============================================================
+
+[ ] Can I brute force the smallest version?
+[ ] Can I enumerate every possible answer?
+[ ] What makes brute force slow?
+[ ] Is there repeated work?
+[ ] Can I precompute something?
+[ ] Can I remove a dimension?
+[ ] Can I sort?
+[ ] Can I binary search?
+[ ] Can I maintain information incrementally?
+
+Use brute force to understand the structure, even if it cannot pass.
+
+
+============================================================
+4. CHECK SORTING
+============================================================
+
+Ask:
+[ ] Would sorting make the condition easier?
+
+Especially when you see:
+[ ] Absolute difference
+[ ] Minimum / maximum
+[ ] Pairs
+[ ] Closest elements
+[ ] Intervals
+[ ] Lexicographical order
+[ ] Grouping
+[ ] Rearrangement
+[ ] a[i] + a[j]
+[ ] |a[i] - a[j]|
+[ ] Frequency
+[ ] "Choose two/three elements"
+
+After sorting, check:
+[ ] Two pointers
+[ ] Greedy
+[ ] Binary search
+[ ] Adjacent pairing
+[ ] Prefix/suffix properties
+
+
+============================================================
+5. CHECK FREQUENCY
+============================================================
+
+Ask:
+[ ] Do I care about positions, or only how many times each value occurs?
+
+If only frequency matters:
+[ ] map
+[ ] unordered_map
+[ ] frequency array if values are small
+
+Clues:
+[ ] Equal elements
+[ ] Duplicates
+[ ] Anagrams
+[ ] Rearrangement
+[ ] Number of ways
+[ ] Most frequent
+[ ] Odd/even occurrences
+
+
+============================================================
+6. CHECK PREFIX / SUFFIX
+============================================================
+
+Ask:
+[ ] Am I repeatedly asking about [0...i] or [i...n-1]?
+
+Try:
+[ ] Prefix
+[ ] Suffix
+
+Possible information:
+[ ] Sum
+[ ] Minimum
+[ ] Maximum
+[ ] Frequency
+[ ] XOR
+[ ] GCD
+
+Classic:
+sum(l,r) = pref[r] - pref[l-1]
+
+
+============================================================
+7. CHECK SUBARRAY PROBLEMS
+============================================================
+
+If the problem asks:
+"longest / shortest / count subarray satisfying..."
+
+Immediately ask:
+[ ] Prefix sum?
+[ ] Prefix XOR?
+[ ] Two pointers?
+[ ] Sliding window?
+[ ] Prefix remainder?
+[ ] Hash map?
+[ ] Monotonic stack?
+[ ] Binary search on answer?
+[ ] DP?
+
+IMPORTANT:
+[ ] Is the property monotonic when expanding/shrinking?
+If yes -> two pointers / sliding window may work.
+If not -> don't blindly use two pointers.
+
+
+============================================================
+8. CHECK SUBSEQUENCE PROBLEMS
+============================================================
+
+Ask:
+[ ] Can elements be skipped?
+
+If yes, consider:
+[ ] DP
+[ ] Greedy
+[ ] LIS
+[ ] LCS
+[ ] Bitmask
+[ ] Sorting + DP
+
+Remember:
+subarray = contiguous
+subsequence = not necessarily contiguous
+subset = order usually irrelevant
+
+
+============================================================
+9. CHECK BINARY SEARCH
+============================================================
+
+Don't only ask:
+"Can I binary search an array?"
+
+Ask:
+[ ] Can I binary search the ANSWER?
+
+Clues:
+[ ] Minimum possible X
+[ ] Maximum possible X
+[ ] Is it possible with X?
+
+Pattern:
+    bool check(X)
+
+Then:
+[ ] Is check(X) monotonic?
+[ ] If X works, do all larger values work?
+OR
+[ ] If X works, do all smaller values work?
+
+If yes -> binary search the answer.
+
+
+============================================================
+10. CHECK GREEDY
+============================================================
+
+Ask:
+[ ] Can I make the locally best choice without hurting the future?
+
+Common greedy clues:
+[ ] Sort first
+[ ] Choose earliest
+[ ] Choose smallest/largest
+[ ] Intervals
+[ ] Scheduling
+[ ] Minimize/maximize
+[ ] Exchange operations
+[ ] "Take as many as possible"
+
+PROOF CHECK:
+[ ] Can I use an exchange argument?
+[ ] Can I show replacing an optimal choice with my greedy choice never makes it worse?
+
+If you cannot justify it, be suspicious.
+
+
+============================================================
+11. CHECK DP
+============================================================
+
+Ask:
+[ ] Are there overlapping subproblems?
+[ ] What information from the past is necessary to determine the future?
+
+Define:
+[ ] State
+[ ] Transition
+[ ] Base case
+[ ] Answer
+
+Possible states:
+[ ] dp[i]
+[ ] dp[i][j]
+[ ] dp[i][mask]
+[ ] dp[node][state]
+[ ] dp[pos][tight][...]
+
+Core question:
+"What is the minimum information I need to remember about the past?"
+
+That information becomes the DP state.
+
+
+============================================================
+12. CHECK GRAPH INTERPRETATION
+============================================================
+
+Ask:
+[ ] Can I represent states as vertices and operations as edges?
+
+Example:
+x -> x+1
+x -> x-1
+x -> x/2
+
+This can become a graph.
+
+Then:
+[ ] Equal edge cost -> BFS
+[ ] Positive different edge costs -> Dijkstra
+[ ] Edge weights only 0/1 -> 0-1 BFS
+[ ] Directed dependency -> Topological sort / DAG DP
+
+
+============================================================
+13. CHECK TREE PROPERTIES
+============================================================
+
+If graph is a tree:
+[ ] n vertices
+[ ] n-1 edges
+[ ] Connected
+[ ] No cycles
+
+Immediately consider:
+[ ] DFS
+[ ] BFS
+[ ] Tree DP
+[ ] Diameter
+[ ] Subtree sizes
+[ ] Parent/depth
+[ ] LCA
+[ ] Binary lifting
+[ ] Rerooting DP
+[ ] Centroid decomposition
+[ ] Euler tour
+
+Especially when asked:
+[ ] Number of ways to color/select/choose nodes
+
+
+============================================================
+14. CHECK INVARIANTS
+============================================================
+
+Whenever operations modify values, ask:
+"What never changes?"
+
+Possible invariants:
+[ ] Sum
+[ ] Sum % k
+[ ] XOR
+[ ] Parity
+[ ] GCD
+[ ] Number of odd elements
+[ ] Color/parity
+[ ] Permutation parity
+
+Find something that remains unchanged before trying to simulate operations.
+
+
+============================================================
+15. CHECK MODULO
+============================================================
+
+If answer is modulo MOD:
+[ ] Addition
+[ ] Multiplication
+[ ] Division
+[ ] Modular inverse
+[ ] Factorials
+[ ] Combinations
+[ ] Fast exponentiation
+
+WARNING:
+(a / b) % MOD is NOT generally the same as
+a * inverse(b) % MOD.
+
+Division requires a valid modular inverse under the modulus.
+
+
+============================================================
+16. CHECK BIT MANIPULATION
+============================================================
+
+Whenever numbers are involved:
+[ ] XOR
+[ ] AND
+[ ] OR
+[ ] Highest set bit
+[ ] Lowest set bit
+[ ] Subset mask
+[ ] Power of two
+[ ] x & (x-1)
+[ ] x & -x
+[ ] Bitwise trie
+
+Useful:
+x & (x-1) -> removes lowest set bit
+x & -x     -> gets lowest set bit
+
+
+============================================================
+17. CHECK MATHEMATICAL STRUCTURE
+============================================================
+
+GCD:
+[ ] gcd
+[ ] divisibility
+[ ] subtraction operations
+
+Prime:
+[ ] Prime?
+[ ] Factor?
+[ ] Divisors?
+[ ] Sieve?
+[ ] Smallest prime factor?
+
+Powers:
+[ ] x -> 2x
+[ ] x -> x/2
+[ ] 2^k
+-> Think bits.
+
+Modulo:
+[ ] Is there periodicity?
+[ ] Does the process repeat?
+
+
+============================================================
+18. CHECK COORDINATE COMPRESSION
+============================================================
+
+If values are huge but only ordering/equality matters:
+[ ] Sort
+[ ] Remove duplicates
+[ ] Map values to 0...n-1
+
+Then consider:
+[ ] Fenwick tree
+[ ] Segment tree
+[ ] Frequency arrays
+
+
+============================================================
+19. CHECK RANGE-QUERY STRUCTURES
+============================================================
+
+If there are many queries on [l,r]:
+
+STATIC ARRAY
+[ ] Prefix sum
+[ ] Sparse table
+[ ] Merge sort tree
+
+POINT UPDATES
+[ ] Fenwick
+[ ] Segment tree
+
+RANGE UPDATES
+[ ] Difference array
+[ ] Lazy segment tree
+
+K-th / smaller / larger queries:
+[ ] Merge sort tree
+[ ] Wavelet tree
+[ ] Fenwick + coordinate compression
+[ ] Segment tree
+
+
+============================================================
+20. CHECK MONOTONICITY
+============================================================
+
+Ask:
+[ ] As X increases, does feasibility/answer move in only one direction?
+
+Example:
+false false false true true true
+
+or:
+true true true false false false
+
+If yes:
+[ ] Binary search
+
+
+============================================================
+21. CHECK SYMMETRY
+============================================================
+
+Ask:
+[ ] Does the problem behave the same from both ends?
+
+Clues:
+[ ] a[i] and a[n-1-i]
+[ ] Palindrome
+[ ] Pairing
+[ ] Matching
+[ ] Reverse
+[ ] Symmetry
+
+Consider:
+[ ] Two pointers
+[ ] Pairing
+[ ] Greedy
+[ ] Palindrome logic
+
+
+============================================================
+22. CHECK OPERATIONS BACKWARDS
+============================================================
+
+If problem says:
+A -> B
+
+Ask:
+[ ] What happens if I start from B?
+[ ] Can I reverse the operations?
+[ ] Is the backward direction simpler?
+
+Sometimes:
+forward = complicated
+backward = obvious
+
+
+============================================================
+23. CHECK WHETHER ORDER MATTERS
+============================================================
+
+Ask:
+[ ] Does swapping two elements change anything?
+
+If NO:
+[ ] Sort
+[ ] Frequency
+[ ] Multiset
+[ ] Combinations
+
+If YES:
+[ ] DP
+[ ] Two pointers
+[ ] Stack
+[ ] Sequence algorithms
+
+
+============================================================
+24. CHECK CONSTRUCTIVE POSSIBILITY
+============================================================
+
+If asked:
+"Print any valid arrangement."
+
+Ask:
+[ ] Can I construct one directly?
+
+Try:
+[ ] Sorting
+[ ] Greedy
+[ ] Parity
+[ ] Alternating arrangement
+[ ] Swapping
+[ ] Permutation
+[ ] Graph traversal
+
+Don't calculate a count if direct construction is possible.
+
+
+============================================================
+25. CHECK COUNTING PROBLEMS
+============================================================
+
+If asked:
+"How many ways?"
+
+Ask:
+[ ] Are choices independent?
+[ ] Can I multiply?
+[ ] Are cases overlapping?
+[ ] Is this DP?
+[ ] Is this combinatorics?
+[ ] Can I count the complement?
+[ ] Can I use frequency?
+[ ] Can I count pairs with a map?
+[ ] Is there double counting?
+
+Often:
+valid = total - invalid
+
+
+============================================================
+26. CHECK COMPLEMENT
+============================================================
+
+Ask:
+[ ] Is counting the bad cases easier?
+[ ] Is counting the valid cases directly difficult?
+
+Try:
+valid = total - invalid
+
+Also consider:
+[ ] Inclusion-exclusion
+[ ] Counting complement
+
+
+============================================================
+27. RECHECK COMPLEXITY
+============================================================
+
+After finding an idea:
+[ ] What is the exact time complexity?
+[ ] What is the exact memory complexity?
+[ ] Does it fit the MAXIMUM constraint?
+
+Example:
+n = 2e5
+O(n log n) -> usually okay
+O(n^2) -> usually not okay
+
+
+============================================================
+28. PROVE THE SOLUTION
+============================================================
+
+Before coding, explain:
+
+"First I do X.
+Then I do Y.
+Because Z is true, this gives the answer."
+
+[ ] Can I explain the algorithm clearly?
+[ ] Can I justify every important step?
+[ ] Can I prove correctness?
+
+
+============================================================
+29. FIND THE ALGORITHM'S INVARIANT
+============================================================
+
+TWO POINTERS:
+[ ] What does [l,r] represent?
+
+BFS:
+[ ] What does dist[v] mean?
+
+DP:
+[ ] What exactly does dp[i] mean?
+
+SEGMENT TREE:
+[ ] What does every node store?
+
+GREEDY:
+[ ] Why is the current choice safe?
+
+If you don't know what your variables represent, stop and clarify the idea.
+
+
+============================================================
+30. DRY RUN
+============================================================
+
+Minimum:
+[ ] n = 1
+[ ] Smallest allowed values
+
+Special:
+[ ] Already solved
+[ ] Impossible
+[ ] Exactly one operation
+[ ] Empty case if applicable
+
+Arrays:
+[ ] All equal
+[ ] Strictly increasing
+[ ] Strictly decreasing
+[ ] Duplicates
+
+Values:
+[ ] Zero
+[ ] Negative if allowed
+[ ] Maximum values
+[ ] 1e9 / 1e18
+
+Structure:
+[ ] Chain tree
+[ ] Star tree
+[ ] Balanced tree
+[ ] Disconnected graph if allowed
+[ ] Multiple test cases
+
+
+============================================================
+31. OVERFLOW CHECK
+============================================================
+
+Ask:
+[ ] Can any intermediate value exceed int?
+
+Danger:
+[ ] a[i] * a[j]
+[ ] n * n
+[ ] Sum
+[ ] Prefix sum
+[ ] Multiplication before modulo
+[ ] Distances
+
+Use long long when appropriate.
+
+Remember:
+int * int can overflow BEFORE being assigned to long long.
+
+Use:
+1LL * a * b
+
+
+============================================================
+32. IMPLEMENTATION CHECK
+============================================================
+
+Before submitting:
+
+[ ] Correct data types
+[ ] Correct indexing
+[ ] 0-index vs 1-index
+[ ] l/r boundaries
+[ ] Empty vector handling
+[ ] Duplicate handling
+[ ] Integer overflow
+[ ] Modulo handling
+[ ] Recursion depth
+[ ] Reset variables between test cases
+[ ] Clear global arrays
+[ ] Correct comparator
+[ ] No accidental infinite loop
+[ ] No unnecessary O(n log n) inside O(n)
+
+
+============================================================
+33. FINAL COMPLEXITY CHECK
+============================================================
+
+Write this before submission:
+
+Time:   O(...)
+Memory: O(...)
+
+Then test against:
+[ ] Maximum n
+[ ] Maximum value
+[ ] Maximum number of test cases
+[ ] Maximum sum of n
+
+
+============================================================
+THE 60-SECOND CONTEST CHECKLIST
+============================================================
+
+1. What exactly is being asked?
+
+2. What are the constraints?
+
+3. What complexity is required?
+
+4. Can I brute force small cases?
+
+5. What changes?
+   What doesn't change?
+
+6. Does sorting help?
+
+7. Does frequency help?
+
+8. Prefix / suffix?
+
+9. Two pointers / sliding window?
+
+10. Binary search on answer?
+
+11. Greedy?
+
+12. DP?
+
+13. Graph / tree?
+
+14. Bit manipulation?
+
+15. Math / invariant?
+
+16. Range query?
+    Fenwick / Segment Tree / Sparse Table / Merge Sort Tree?
+
+17. Can I reverse the operations?
+
+18. Can I count the complement?
+
+19. What is my invariant?
+
+20. Can I prove it?
+
+21. Dry run edge cases.
+
+22. Complexity + overflow check.
+
+23. Code.
+
+24. Submit.
+
+
+============================================================
+MENTAL HIERARCHY
+============================================================
+
+CONSTRAINTS
+    |
+    v
+BRUTE FORCE
+    |
+    v
+WHAT MAKES IT SLOW?
+    |
+    v
+CAN I REMOVE REPEATED WORK?
+    |
+    v
+SORT / PREFIX / HASH
+    |
+    v
+TWO POINTERS / BINARY SEARCH
+    |
+    v
+GREEDY / DP
+    |
+    v
+GRAPH / TREE
+    |
+    v
+ADVANCED DATA STRUCTURE
+    |
+    v
+MATH / OBSERVATION
+
+
+============================================================
+CORE RULES TO REMEMBER
+============================================================
+
+1. Constraints tell you what kind of solution is possible.
+
+2. Brute force helps reveal what is repeated.
+
+3. Sorting is often the first simplification.
+
+4. Ask what information from the past actually matters.
+
+5. Look for monotonicity before reaching for binary search.
+
+6. Look for invariants whenever operations modify things.
+
+7. Don't use greedy without a reason/proof.
+
+8. Don't use DP without defining the state clearly.
+
+9. A graph can be hidden inside an "operation" problem.
+
+10. A tree is a graph with extremely useful structure.
+
+11. If values are huge but only order matters, consider compression.
+
+12. If many range queries exist, think data structures.
+
+13. If the answer is hard to count, try counting the complement.
+
+14. If forward operations are ugly, try reversing them.
+
+15. Always test the smallest and strangest cases.
+
+16. Always check overflow.
+
+17. Always calculate time and memory complexity.
+
+18. If you cannot explain why your solution works, you are not finished solving it.
+
+19. Don't jump to advanced data structures just because you know them.
+
+20. The goal is not to write complicated code.
+    The goal is to find the simplest correct idea that fits the constraints.
