@@ -1,192 +1,164 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-struct MergeSortTree {
+struct segment
+{
     int n;
-    vector<vector<int>> tree;
 
-    MergeSortTree(const vector<int>& a) {
-        n = (int)a.size();
+    // Normal segment tree
+    vector<int> tree;
+
+    // Merge Sort Tree
+    vector<vector<int>> seg;
+
+    segment(int n)
+    {
+        this->n = n;
         tree.resize(4 * n);
-        build(a, 1, 0, n - 1);
+        seg.resize(4 * n);
     }
 
-    void build(const vector<int>& a, int node, int l, int r) {
-        if (l == r) {
-            tree[node] = {a[l]};
+    // ============================================================
+    // NORMAL SEGMENT TREE
+    // ============================================================
+
+    int merge(int a, int b){
+        return a + b; //the operation you want to do
+    }
+
+    void build(vector<int> &arr, int node, int start, int end)
+    {
+        if (start == end){
+            tree[node] = arr[start];
             return;
         }
 
-        int mid = (l + r) / 2;
+        int mid = (start + end) >> 1;
 
-        build(a, node * 2, l, mid);
-        build(a, node * 2 + 1, mid + 1, r);
+        build(arr, 2 * node, start, mid);
+        build(arr, 2 * node + 1, mid + 1, end);
 
-        tree[node].resize(
-            tree[node * 2].size() +
-            tree[node * 2 + 1].size()
-        );
-
-        merge(
-            tree[node * 2].begin(),
-            tree[node * 2].end(),
-            tree[node * 2 + 1].begin(),
-            tree[node * 2 + 1].end(),
-            tree[node].begin()
-        );
+        tree[node] = merge(tree[2 * node], tree[2 * node + 1]);
     }
 
-    // Count elements <= x in range [ql, qr]
-    int query(int node, int l, int r,
-              int ql, int qr, int x) {
+    void update(int node, int start, int end, int idx, int val)
+    {
+        if (start == end)
+        {
+            tree[node] = val;
+            return;
+        }
 
-        // No overlap
-        if (qr < l || r < ql)
+        int mid = (start + end) >> 1;
+
+        if (idx <= mid)
+            update(2 * node, start, mid, idx, val);
+        else
+            update(2 * node + 1, mid + 1, end, idx, val);
+
+        tree[node] = merge(tree[2 * node], tree[2 * node + 1]);
+    }
+
+    int query(int node, int start, int end, int l, int r)
+    {
+        if (r < start || end < l)
+            return 0; // the default value that needs to be returned
+
+        if (l <= start && end <= r)
+            return tree[node];
+
+        int mid = (start + end) >> 1;
+
+        int q1 = query(2 * node, start, mid, l, r);
+        int q2 = query(2 * node + 1, mid + 1, end, l, r);
+
+        return merge(q1, q2);
+    }
+
+    int rangequery(int l, int r)
+    {
+        return query(1, 0, n - 1, l, r);
+    }
+
+    void update(int pos, int val)
+    {
+        update(1, 0, n - 1, pos, val);
+    }
+
+    // ============================================================
+    // MERGE SORT TREE
+    // ============================================================
+
+    void buildMST(vector<int> &a, int node, int l, int r)
+    {
+
+        if (l == r){
+            seg[node].push_back(a[l]);
+            return;
+        }
+
+        int mid = (l + r) >> 1;
+
+        buildMST(a, node * 2, l, mid);
+        buildMST(a, node * 2 + 1, mid + 1, r);
+
+        merge(seg[node * 2].begin(),seg[node * 2].end(),seg[node * 2 + 1].begin(),seg[node * 2 + 1].end(),back_inserter(seg[node]));
+    }
+
+    int queryMST(int node, int l, int r, int lx, int rx, int x)
+    {
+
+        // completely outside
+        if (l > rx || r < lx)
             return 0;
 
-        // Complete overlap
-        if (ql <= l && r <= qr) {
-            return upper_bound(
-                tree[node].begin(),
-                tree[node].end(),
-                x
-            ) - tree[node].begin();
+        // completely inside
+        if (lx <= l && r <= rx)
+        {
+
+            // number of elements < x
+            return lower_bound(seg[node].begin(), seg[node].end(), x) - seg[node].begin();
         }
 
-        int mid = (l + r) / 2;
+        int mid = (l + r) >> 1;
 
-        return query(node * 2, l, mid, ql, qr, x)
-             + query(node * 2 + 1, mid + 1, r, ql, qr, x);
+        return queryMST(node * 2, l, mid, lx, rx, x) + queryMST(node * 2 + 1, mid + 1, r, lx, rx, x);
     }
 
-    // Count elements <= x in [l, r]
-    int countLE(int l, int r, int x) {
-        return query(1, 0, n - 1, l, r, x);
-    }
-
-    // Count elements < x in [l, r]
-    int countLT(int l, int r, int x) {
-        return countLE(l, r, x - 1);
-    }
-
-    // Count elements >= x in [l, r]
-    int countGE(int l, int r, int x) {
-        return (r - l + 1) - countLT(l, r, x);
-    }
-
-    // Count elements > x in [l, r]
-    int countGT(int l, int r, int x) {
-        return (r - l + 1) - countLE(l, r, x);
-    }
-
-    // Count elements in [x, y] inside array range [l, r]
-    int countInValueRange(int l, int r, int x, int y) {
-        return countLE(l, r, y) - countLT(l, r, x);
-    }
-
-    // Minimum value >= x in [l, r]
-    // Returns INT_MAX if no such value exists.
-    int minGE(int node, int l, int r,
-              int ql, int qr, int x) {
-
-        if (qr < l || r < ql)
-            return INT_MAX;
-
-        if (ql <= l && r <= qr) {
-            auto it = lower_bound(
-                tree[node].begin(),
-                tree[node].end(),
-                x
-            );
-
-            if (it == tree[node].end())
-                return INT_MAX;
-
-            return *it;
-        }
-
-        int mid = (l + r) / 2;
-
-        return min(
-            minGE(node * 2, l, mid, ql, qr, x),
-            minGE(node * 2 + 1, mid + 1, r, ql, qr, x)
-        );
-    }
-
-    int minGE(int l, int r, int x) {
-        return minGE(1, 0, n - 1, l, r, x);
-    }
-
-    // Maximum value <= x in [l, r]
-    // Returns INT_MIN if no such value exists.
-    int maxLE(int node, int l, int r,
-              int ql, int qr, int x) {
-
-        if (qr < l || r < ql)
-            return INT_MIN;
-
-        if (ql <= l && r <= qr) {
-            auto it = upper_bound(
-                tree[node].begin(),
-                tree[node].end(),
-                x
-            );
-
-            if (it == tree[node].begin())
-                return INT_MIN;
-
-            --it;
-            return *it;
-        }
-
-        int mid = (l + r) / 2;
-
-        return max(
-            maxLE(node * 2, l, mid, ql, qr, x),
-            maxLE(node * 2 + 1, mid + 1, r, ql, qr, x)
-        );
-    }
-
-    int maxLE(int l, int r, int x) {
-        return maxLE(1, 0, n - 1, l, r, x);
+    int rangeQueryMST(int l, int r, int x)
+    {
+        return queryMST(1, 0, n - 1, l, r, x);
     }
 };
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
 
-    int n;
-    cin >> n;
 
-    vector<int> a(n);
+//reference
+void build(vector<int>& a, int node, int l, int r) {
 
-    for (int &x : a)
-        cin >> x;
-
-    MergeSortTree mst(a);
-
-    int q;
-    cin >> q;
-
-    while (q--) {
-        int l, r, x;
-        cin >> l >> r >> x;
-
-        // Example:
-        // Count elements <= x in [l, r]
-        cout << mst.countLE(l, r, x) << '\n';
+    if (l == r) {
+        seg[node].push_back(a[l]);
+        return;
     }
 
-    return 0;
-}
-/*
-mst.countLE(l, r, x);          // <= x
-mst.countLT(l, r, x);          // < x
-mst.countGE(l, r, x);          // >= x
-mst.countGT(l, r, x);          // > x
-mst.countInValueRange(l,r,x,y);// x <= a[i] <= y
+    int mid = (l + r) / 2;
 
-mst.minGE(l, r, x);             // minimum >= x
-mst.maxLE(l, r, x);             // maximum <= x
-*/
+    build(a, node * 2, l, mid);
+    build(a, node * 2 + 1, mid + 1, r);
+
+    // Merge the actual segments conceptually.
+    // But we only keep prefix maximums.
+
+    int mx = -1;
+
+    for (int x : seg[node * 2]) {
+        mx = max(mx, x);
+
+        if (seg[node].empty() || seg[node].back() != mx)
+            seg[node].push_back(mx);
+    }
+
+    for (int x : seg[node * 2 + 1]) {
+        mx = max(mx, x);
+
+        if (seg[node].back() != mx)
+            seg[node].push_back(mx);
+    }
+}
